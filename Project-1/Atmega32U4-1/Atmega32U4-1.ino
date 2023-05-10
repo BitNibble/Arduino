@@ -32,14 +32,15 @@ void setup() {
  // Power up Timer 1
  mega.cpu.reg->prr0 &= ~(1 << 3);
  // Timer 1
- // wavegenmode normal
+ //         wavegenmode
+ // normal
  //mega.tc1.reg->tccr1a &= ~((1 << WGM11) | (1 << WGM10));
  //mega.tc1.reg->tccr1b &= ~((1 << WGM13) | (1 << WGM12));
- // wavegenmode CTC
+ // CTC
  mega.tc1.reg->tccr1a &= ~((1 << WGM11) | (1 << WGM10));
  mega.tc1.reg->tccr1b |= (1 << WGM12);
  mega.tc1.reg->tccr1b &= ~(1 << WGM13);
- // interrupt overflow
+ // interrupt overflow and on compare match A
  mega.tc1.reg->timsk1 |= ((1 << TOIE1) | (1 << OCIE1A));
  // compoutmodeA disconnected
  mega.tc1.reg->tccr1a &= ~((1 << COM1A0) | (1 << COM1A1));
@@ -57,7 +58,7 @@ void setup() {
  //mega.tc1.reg->tccr1b |= (5 << CS10); // 1024
  mega.tc1.reg->tccr1b |= (1 << CS10); // 1
 
-// Turn on all Interrupt Hnadler
+// Turn on all Interrupt Handlers
  mega.cpu.reg->sreg |= (1 << 7);
 
  //Serial.begin(9600);
