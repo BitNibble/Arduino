@@ -5,7 +5,7 @@ extern "C" {
 }
 #include <inttypes.h>
 
-/*** File Conatant and Macros ***/
+/*** File Constant and Macros ***/
 
 /*** File Variables ***/
 ATMEGA32U4 mega;
@@ -29,10 +29,10 @@ void setup() {
   count = 0;
   count2 = top;
   PORTINIC();
+/****************** Timer 1 ********************/
  // Power up Timer 1
  mega.cpu.reg->prr0 &= ~(1 << 3);
- // Timer 1
- //         wavegenmode
+ //         wavegen mode
  // normal
  //mega.tc1.reg->tccr1a &= ~((1 << WGM11) | (1 << WGM10));
  //mega.tc1.reg->tccr1b &= ~((1 << WGM13) | (1 << WGM12));
@@ -40,25 +40,30 @@ void setup() {
  mega.tc1.reg->tccr1a &= ~((1 << WGM11) | (1 << WGM10));
  mega.tc1.reg->tccr1b |= (1 << WGM12);
  mega.tc1.reg->tccr1b &= ~(1 << WGM13);
+ //       Interrupt Handler
  // interrupt overflow and on compare match A
  mega.tc1.reg->timsk1 |= ((1 << TOIE1) | (1 << OCIE1A));
+ //       Output mode
  // compoutmodeA disconnected
  mega.tc1.reg->tccr1a &= ~((1 << COM1A0) | (1 << COM1A1));
  // compoutmodeB disconnected
  mega.tc1.reg->tccr1a &= ~((1 << COM1B0) | (1 << COM1B1));
  // compoutmodeB disconnected
  mega.tc1.reg->tccr1a &= ~((1 << COM1C0) | (1 << COM1C1));
+ //       Output Compare
  // compareA
  mega.tc1.reg->ocr1a = mega.writehlbyte(0x00FF);
  // compareB
  //mega.tc1.reg->ocr1b = mega.writehlbyte(0x00FF);
  // compareC
  //mega.tc1.reg->ocr1c = mega.writehlbyte(0x00FF);
- // prescaler
+ //       Prescaler
  //mega.tc1.reg->tccr1b |= (5 << CS10); // 1024
  mega.tc1.reg->tccr1b |= (1 << CS10); // 1
+/************************************************/
 
-// Turn on all Interrupt Handlers
+
+  // Turn on all Interrupt Handlers
  mega.cpu.reg->sreg |= (1 << 7);
 
  //Serial.begin(9600);
