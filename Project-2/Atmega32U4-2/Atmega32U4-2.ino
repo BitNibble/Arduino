@@ -94,7 +94,7 @@ mega.adc.reg->adscrb &= ~(0x0F); // Set to free running mode, controlled by ADIF
  // Turn on all Interrupt Handlers
  mega.cpu.reg->sreg |= (1 << 7);
 
- //Serial.begin(9600);
+ Serial.begin(9600);
 }
 
 void loop() {
