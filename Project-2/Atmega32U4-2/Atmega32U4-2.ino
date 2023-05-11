@@ -4,7 +4,7 @@ Author: Sergio Santos
 	<sergio.salazar.santos@gmail.com>
 License: GNU General Public License
 Hardware: Arduino Leonardo
-Date: 01052023
+Date: 11052023
 Comment:
 	
 ************************************************************************/
@@ -25,6 +25,7 @@ uint8_t updown;
 uint16_t count;
 uint16_t count2;
 uint16_t top;
+uint16_t analog;
 
 /*** File Header ***/
 void PORTINIC(void);
@@ -71,9 +72,26 @@ void setup() {
  //mega.tc1.reg->tccr1b |= (5 << CS10); // 1024
  mega.tc1.reg->tccr1b |= (1 << CS10); // 1
 /************************************************/
+/****************** Analog 0 ********************/
+//        Prescaler
+mega.adc.reg->adcsra &= ~(0x07); // Clear parameter field
+mega.adc.reg->adcsra |= 0x07; // Set Division Factor to 128
+//        MUX (ADC channel configure)
+mega.adc.reg->admux &= ~(0x1F); // Clear parameter field
+mega.adc.reg->admux &= ~(0x1F); // Set to ADC0, PF0, pin 41
+//        Reference Selection
+mega.adc.reg->admux &= -(0xC0); // Clear parameter field
+mega.adc.reg->admux |= -(0x40); // AVCC with external capacitor on AREF pin
+//        Enable ADC and Start Conversion
+mega.adc.reg->adcsra |= 0xC0;
+//        Trigger conversion enable
+mega.adc.reg->adcsra |= (1 << 5);
+//        Trigger source selection
+mega.adc.reg->adscrb &= ~(0x0F); // Clear parameter field
+mega.adc.reg->adscrb &= ~(0x0F); // Set to free running mode, controlled by ADIF
+/************************************************/
 
-
-  // Turn on all Interrupt Handlers
+ // Turn on all Interrupt Handlers
  mega.cpu.reg->sreg |= (1 << 7);
 
  //Serial.begin(9600);
@@ -83,10 +101,12 @@ void loop() {
   // put your main code here, to run repeatedly:
   pa.update(&pa.par, PORTB);
 
-  //Serial.print((int)count);
-  //Serial.println("\n");
-
-  a = pa.par.HL;
+  delay(1000);
+  analog = mega.readhlbyte(mega.adc.reg->adc);
+  Serial.print((uint16_t) analog);
+  Serial.println("\n");
+  
+  //a = pa.par.HL;
 
 }
 
@@ -94,10 +114,12 @@ void loop() {
 void PORTINIC(void)
 {
   mega.portc.reg->ddr |= (1 << 7);
+  mega.portf.reg->ddr &= ~1; // PF0 pin 41 as input
+  mega.portf.reg->port |= 1; // PF0 pin 41 pull up resister
 }
 
 /*** Interrupt Handlers ***/
-ISR(TIMER1_OVF_vect){
+ISR(TIMER1_OVF_vect){ // TIMER0 is beeing used by arduino software as the delay procedure, what a waste.
   switch(updown){
     case 0:
       if(count++ > count2){ if(count2 > 0){ mega.portc.reg->port ^=  (1 << 7); count2--; count = 0; }else{ updown = 1;} }
