@@ -3,7 +3,7 @@
 Author: Sergio Manuel Santos
 	<sergio.salazar.santos@gmail.com>
 License: GNU General Public License
-Hardware: Atmega328 by ETT ET-BASE
+Hardware: Atmega32U8 by ETT ET-BASE
 Date: 09052023
 Comment: 
 	Virtual Image Atmega 32U4.
@@ -38,6 +38,13 @@ Comment:
 #define Atmega32U4Usart1_Address 0x00C8
 #define Atmega32U4UsbDeviceRegister_Address 0x00D7
 #define Atmega32U4WatchdogTimer_Address 0x0060
+// AUXILIAR
+#define Atmega32U4TimerInterruptFlag_Address 0x0035
+#define Atmega32U4TimerMask_Address 0x006E;
+#define Atmega32U4CompareRegister0_Address 0x0047
+#define Atmega32U4CompareRegister1_Address 0x0088
+#define Atmega32U4CompareRegister3_Address 0x0098
+#define Atmega32U4CompareRegister4_Address 0x00CF
 
 /*** Global Variable ***/
 // HLbyte
@@ -45,6 +52,50 @@ typedef struct {
 	uint8_t L; // Lower address
 	uint8_t H; // Higher address
 } HighLowByte;
+
+/****************** Auxiliary ******************/
+typedef struct {
+	uint8_t tifr0; // 0x35
+	uint8_t tifr1; // 0x36
+	uint8_t fill; // 0x37
+	uint8_t tifr3; // 0x38
+	uint8_t tifr4; // 0x39
+} Atmega32U4TimerInterruptFlag_TypeDef;
+
+typedef struct {
+	uint8_t timsk0; // 0x6E
+	uint8_t timsk1; // 0x6F
+	uint8_t fill; // 0x70
+	uint8_t timsk2; // 0x71
+	uint8_t timsk3; // 0x72
+} Atmega32U4TimerMask_TypeDef;
+
+typedef struct {
+	uint8_t ocr0a; // 0x47
+	uint8_t ocr0b; // 0x48
+} Atmega32U4CompareRegister0_TypeDef;
+
+typedef struct {
+	HighLowByte ocr1a; // 0x88 0x89
+	HighLowByte ocr1b; // 0x8A 0x8B
+	HighLowByte ocr1c; // 0x8C 0x8D
+} Atmega32U4CompareRegister1_TypeDef;
+
+typedef struct {
+	HighLowByte ocr3a; // 0x98 0x99
+	HighLowByte ocr3b; // 0x9A 0x9B
+	HighLowByte ocr3c; // 0x9C 0x9D
+} Atmega32U4CompareRegister3_TypeDef;
+
+typedef struct {
+	uint8_t ocr4a; // 0xCF
+	uint8_t ocr4b; // 0xD0
+	uint8_t ocr4c; // 0xD1
+	uint8_t ocr4d; // 0xD2
+	uint8_t fill; // (0xD4 - 0xD2) - 1
+	uint8_t dt4; // 0xD4
+} Atmega32U4CompareRegister4_TypeDef;
+/***********************************************/
 
 // MAIN HARDWARE LAYER
 // GPWR
@@ -209,10 +260,6 @@ typedef struct {
 
 // Timer/Counter, 10-bit (TC4)
 typedef struct {
-	uint8_t tifr4; // 0x39
-	uint8_t fill1[56]; // (0x72 - 0x39) - 1
-	uint8_t timsk4; // 0x72
-	uint8_t fill2[75];// (0xBE - 0x72) - 1
 	uint8_t tcnt4; // 0xBE
 	uint8_t tc4h; // 0xBF
 	uint8_t tccr4a; // 0xC0
@@ -220,61 +267,46 @@ typedef struct {
 	uint8_t tccr4c; // 0xC2
 	uint8_t tccr4d; // 0xC3
 	uint8_t tccr4e; // 0xC4
-	uint8_t fill3[10]; // (0xCF - 0xC4) - 1
-	uint8_t ocr4a; // 0xCF
-	uint8_t ocr4b; // 0xD0
-	uint8_t ocr4c; // 0xD1
-	uint8_t ocr4d; // 0xD2
-	uint8_t fill4; // (0xD4 - 0xD2) - 1
-	uint8_t dt4; // 0xD4
+	Atmega32U4CompareRegister4_TypeDef* comp; // 0xCF
+	Atmega32U4TimerMask_TypeDef* mask; // 0x6E
+	Atmega32U4TimerInterruptFlag_TypeDef* flag; // 0x35
 } Atmega32U4TimerCounter4_TypeDef;
 
 // Timer/Counter, 16-bit (TC1)
 typedef struct {
-	uint8_t tifr1; // 0x36
-	uint8_t fill1[56]; // (0x6F - 0x36) - 1
-	uint8_t timsk1; // 0x6F
-	uint8_t fill2[16]; // (0x80 - 0x6F) - 1
 	uint8_t tccr1a; // 0x80
 	uint8_t tccr1b; // 0x81
 	uint8_t tccr1c; // 0x82
 	uint8_t fill3; // (0x84 - 0x82) - 1
 	HighLowByte tcnt1; // 0x84 0x85
 	HighLowByte icr1; // 0x86 0x87
-	HighLowByte ocr1a; // 0x88 0x89
-	HighLowByte ocr1b; // 0x8A 0x8B
-	HighLowByte ocr1c; // 0x8C 0x8D
+	Atmega32U4CompareRegister1_TypeDef* comp; // 0x88
+	Atmega32U4TimerMask_TypeDef* mask; // 0x6E
+	Atmega32U4TimerInterruptFlag_TypeDef* flag; // 0x35
 } Atmega32U4TimerCounter1_TypeDef;
 
 // Timer/Counter, 16-bit (TC3)
 typedef struct {
-	uint8_t tifr3; // 0x38
-	uint8_t fill1[56]; // (0x71 - 0x38) - 1
-	uint8_t timsk3; // 0x71
-	uint8_t fill2[30]; // (0x90 - 0x71) - 1
 	uint8_t tccr3a; // 0x90
 	uint8_t tccr3b; // 0x91
 	uint8_t tccr3c; // 0x92
 	uint8_t fill3; // (0x94 - 0x92) - 1
 	HighLowByte tcnt3; // 0x94 0x95
 	HighLowByte icr3; // 0x96 0x97
-	HighLowByte ocr3a; // 0x98 0x99
-	HighLowByte ocr3b; // 0x9A 0x9B
-	HighLowByte ocr3c; // 0x9C 0x9D
+	Atmega32U4CompareRegister3_TypeDef* comp; // 0x98
+	Atmega32U4TimerMask_TypeDef* mask; // 0x6E
+	Atmega32U4TimerInterruptFlag_TypeDef* flag; // 0x35
 } Atmega32U4TimerCounter3_TypeDef;
 
 // Timer/Counter, 8-bit (TC0)
 typedef struct {
-	uint8_t tifr0; // 0x35
-	uint8_t fill1[13]; // (0x43 - 0x35) - 1
 	uint8_t gtccr; // 0x43
 	uint8_t tccr0a; // 0x44
 	uint8_t tccr0b; // 0x45
 	uint8_t tcnt0; // 0x46
-	uint8_t ocr0a; // 0x47
-	uint8_t ocr0b; // 0x48
-	uint8_t fill2[37]; // (0x6E - 0x48) - 1
-	uint8_t timsk0; // 0x6E
+	Atmega32U4CompareRegister0_TypeDef* comp; // 0x47
+	Atmega32U4TimerMask_TypeDef* mask; // 0x6E
+	Atmega32U4TimerInterruptFlag_TypeDef* flag; // 0x35
 } Atmega32U4TimerCounter0_TypeDef;
 
 // Two Wire Serial Interface (TWI)
