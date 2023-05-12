@@ -4,7 +4,7 @@ Author: Sergio Manuel Santos
 	<sergio.salazar.santos@gmail.com>
 License: GNU General Public License
 Hardware: Atmega32U4 by ETT ET-BASE
-Date: 09052023
+Date: 12052023
 Comment: 
 	Virtual Image Atmega 32U4 mapping.
 *********************************************************************/
@@ -61,6 +61,7 @@ typedef struct {
 // CPU Register (CPU)
 typedef struct {
 	Atmega32U4CPURegister_TypeDef* reg;
+	Atmega32U4ClockSelect_TypeDef* clk;
 } Atmega32U4CPURegister;
 
 // EEPROM (EEPROM)
@@ -125,6 +126,9 @@ typedef struct {
 // Timer/Counter, 10-bit (TC4)
 typedef struct {
 	Atmega32U4TimerCounter4_TypeDef* reg;
+	Atmega32U4CompareRegister4_TypeDef* comp;
+	Atmega32U4TimerMask_TypeDef* mask;
+	Atmega32U4TimerMask_TypeDef* flag;
 	#if defined(_ATMEGA32U4TIMER_H_)
 	TIMER_COUNTER4 (*enable)(unsigned char wavegenmode, unsigned char interrupt);
 	#endif
@@ -133,6 +137,9 @@ typedef struct {
 // Timer/Counter, 16-bit (TC1)
 typedef struct {
 	Atmega32U4TimerCounter1_TypeDef* reg;
+	Atmega32U4CompareRegister1_TypeDef* comp;
+	Atmega32U4TimerMask_TypeDef* mask;
+	Atmega32U4TimerMask_TypeDef* flag;
 	#if defined(_ATMEGA32U4TIMER_H_)
 		TIMER_COUNTER1 (*enable)(unsigned char wavegenmode, unsigned char interrupt);
 	#endif
@@ -141,6 +148,9 @@ typedef struct {
 // Timer/Counter, 16-bit (TC3)
 typedef struct {
 	Atmega32U4TimerCounter3_TypeDef* reg;
+	Atmega32U4CompareRegister3_TypeDef* comp;
+	Atmega32U4TimerMask_TypeDef* mask;
+	Atmega32U4TimerMask_TypeDef* flag;
 	#if defined(_ATMEGA32U4TIMER_H_)
 		TIMER_COUNTER3 (*enable)(unsigned char wavegenmode, unsigned char interrupt);
 	#endif
@@ -149,6 +159,9 @@ typedef struct {
 // Timer/Counter, 8-bit (TC0)
 typedef struct {
 	Atmega32U4TimerCounter0_TypeDef* reg;
+	Atmega32U4CompareRegister0_TypeDef* comp;
+	Atmega32U4TimerMask_TypeDef* mask;
+	Atmega32U4TimerMask_TypeDef* flag;
 	#if defined(_ATMEGA32U4TIMER_H_)
 		TIMER_COUNTER0 (*enable)(unsigned char wavegenmode, unsigned char interrupt);
 	#endif
