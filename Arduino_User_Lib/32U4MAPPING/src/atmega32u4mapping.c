@@ -72,32 +72,32 @@ ATMEGA32U4 ATMEGA32U4enable(void){
 	// TC4
 	ret.tc4.reg = (Atmega32U4TimerCounter4_TypeDef*) Atmega32U4TimerCounter4_Address;
 	ret.tc4.comp = (Atmega32U4CompareRegister4_TypeDef*) Atmega32U4CompareRegister4_Address;
-	ret.tc4.mask = (Atmega32U4TimerMask_TypeDef*) Atmega32U4TimerMask_Address;
-	ret.tc4.flag = (Atmega32U4TimerInterruptFlag_TypeDef*) Atmega32U4TimerInterruptFlag_Address;
+	ret.tc4.imask = (Atmega32U4TimerMask_TypeDef*) Atmega32U4TimerMask_Address;
+	ret.tc4.iflag = (Atmega32U4TimerInterruptFlag_TypeDef*) Atmega32U4TimerInterruptFlag_Address;
 	#if defined(_ATMEGA32U4TIMER_H_)
 		ret.tc4.enable = TIMER_COUNTER4enable;
 	#endif
 	// TC1
 	ret.tc1.reg = (Atmega32U4TimerCounter1_TypeDef*) Atmega32U4TimerCounter1_Address;
 	ret.tc1.comp = (Atmega32U4CompareRegister1_TypeDef*) Atmega32U4CompareRegister1_Address;
-	ret.tc1.mask = (Atmega32U4TimerMask_TypeDef*) Atmega32U4TimerMask_Address;
-	ret.tc1.flag = (Atmega32U4TimerInterruptFlag_TypeDef*) Atmega32U4TimerInterruptFlag_Address;
+	ret.tc1.imask = (Atmega32U4TimerMask_TypeDef*) Atmega32U4TimerMask_Address;
+	ret.tc1.iflag = (Atmega32U4TimerInterruptFlag_TypeDef*) Atmega32U4TimerInterruptFlag_Address;
 	#if defined(_ATMEGA32U4TIMER_H_)
 		ret.tc1.enable = TIMER_COUNTER1enable;
 	#endif
 	// TC3
 	ret.tc3.reg = (Atmega32U4TimerCounter3_TypeDef*) Atmega32U4TimerCounter3_Address;
 	ret.tc3.comp = (Atmega32U4CompareRegister3_TypeDef*) Atmega32U4CompareRegister3_Address;
-	ret.tc3.mask = (Atmega32U4TimerMask_TypeDef*) Atmega32U4TimerMask_Address;
-	ret.tc3.flag = (Atmega32U4TimerInterruptFlag_TypeDef*) Atmega32U4TimerInterruptFlag_Address;
+	ret.tc3.imask = (Atmega32U4TimerMask_TypeDef*) Atmega32U4TimerMask_Address;
+	ret.tc3.iflag = (Atmega32U4TimerInterruptFlag_TypeDef*) Atmega32U4TimerInterruptFlag_Address;
 	#if defined(_ATMEGA32U4TIMER_H_)
 		ret.tc3.enable = TIMER_COUNTER3enable;
 	#endif
 	// TC0
 	ret.tc0.reg = (Atmega32U4TimerCounter0_TypeDef*) Atmega32U4TimerCounter0_Address;
 	ret.tc0.comp = (Atmega32U4CompareRegister0_TypeDef*) Atmega32U4CompareRegister0_Address;
-	ret.tc0.mask = (Atmega32U4TimerMask_TypeDef*) Atmega32U4TimerMask_Address;
-	ret.tc0.flag = (Atmega32U4TimerInterruptFlag_TypeDef*) Atmega32U4TimerInterruptFlag_Address;
+	ret.tc0.imask = (Atmega32U4TimerMask_TypeDef*) Atmega32U4TimerMask_Address;
+	ret.tc0.iflag = (Atmega32U4TimerInterruptFlag_TypeDef*) Atmega32U4TimerInterruptFlag_Address;
 	#if defined(_ATMEGA32U4TIMER_H_)
 		ret.tc0.enable = TIMER_COUNTER0enable;
 	#endif

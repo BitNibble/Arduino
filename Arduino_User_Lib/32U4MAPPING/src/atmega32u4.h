@@ -54,7 +54,8 @@ typedef struct {
 	uint8_t H; // Higher address
 } HighLowByte;
 
-/****************** Auxiliary ******************/
+//		MAIN HARDWARE LAYER
+/************* Auxiliary *************/
 // timer
 typedef struct {
 	uint8_t tifr0; // 0x35
@@ -111,9 +112,8 @@ typedef struct {
 	uint8_t clksel1; // 0xC6
 	uint8_t clksta; // 0xC7
 } Atmega32U4ClockSelect_TypeDef;
-/***********************************************/
+/*************************************/
 
-// MAIN HARDWARE LAYER
 // GPWR
 typedef struct {
 	uint8_t r0;
