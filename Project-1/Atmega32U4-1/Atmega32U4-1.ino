@@ -13,7 +13,6 @@ extern "C" {
   #include <atmega32u4mapping.h>
   #include <explode.h>
 }
-#include <inttypes.h>
 
 /*** File Constant and Macros ***/
 
