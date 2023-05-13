@@ -30,10 +30,10 @@ Comment:
 #define Atmega32U4JtagInterface_Address 0x0051
 #define Atmega32U4PhaseLockedLoop_Address 0x0049
 #define Atmega32U4SerialPeripherialInterface_Address 0x004C
-#define Atmega32U4TimerCounter4_Address 0x0039
-#define Atmega32U4TimerCounter1_Address 0x0036
-#define Atmega32U4TimerCounter3_Address 0x0038
-#define Atmega32U4TimerCounter0_Address 0x0035
+#define Atmega32U4TimerCounter4_Address 0x00BE
+#define Atmega32U4TimerCounter1_Address 0x0080
+#define Atmega32U4TimerCounter3_Address 0x0090
+#define Atmega32U4TimerCounter0_Address 0x0043
 #define Atmega32U4TwoWireSerialInterface_Address 0x00B8
 #define Atmega32U4Usart1_Address 0x00C8
 #define Atmega32U4UsbDeviceRegister_Address 0x00D7
@@ -42,8 +42,8 @@ Comment:
 #define Atmega32U4TimerInterruptFlag_Address 0x0035
 #define Atmega32U4TimerMask_Address 0x006E;
 #define Atmega32U4CompareRegister0_Address 0x0047
-#define Atmega32U4CompareRegister1_Address 0x0088
-#define Atmega32U4CompareRegister3_Address 0x0098
+#define Atmega32U4CompareRegister1_Address 0x0086
+#define Atmega32U4CompareRegister3_Address 0x0096
 #define Atmega32U4CompareRegister4_Address 0x00CF
 #define Atmega32U4ClockSelect_Address 0x00C5
 
