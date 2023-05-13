@@ -130,7 +130,7 @@ typedef struct {
 	Atmega32U4TimerMask_TypeDef* imask;
 	Atmega32U4TimerMask_TypeDef* iflag;
 	#if defined(_ATMEGA32U4TIMER_H_)
-	TIMER_COUNTER4 (*enable)(unsigned char wavegenmode, unsigned char interrupt);
+		TIMER_COUNTER4 (*enable)(unsigned char wavegenmode, unsigned char interrupt);
 	#endif
 } Atmega32U4TimerCounter4;
 
