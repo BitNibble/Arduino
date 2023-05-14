@@ -17,6 +17,8 @@ Comment:
 
 /*** File Header ***/
 rotaryencoderparameter RotEnc_rte(rotaryencoderparameter* par, uint8_t data);
+uint8_t ROTENClh(uint8_t xp, uint8_t xi);
+uint8_t ROTENChl(uint8_t xp, uint8_t xi);
 
 /*** Procedure & Function ***/
 ROTENC ROTENCenable( uint8_t ChnApin, uint8_t ChnBpin )
@@ -38,8 +40,7 @@ rotaryencoderparameter RotEnc_rte(rotaryencoderparameter* par, uint8_t data)
 {
 	uint8_t hl;
 	par->chn = data & ((1 << par->PinChnB) | (1 << par->PinChnA));
-	hl = par->chn ^ par->pchn;
-	hl &= par->pchn;
+	hl = ROTENChl(par->pchn, par->chn);
 	if(par->pchn != par->chn){
 		if((par->pchn == ((1 << par->PinChnB) | (1 << par->PinChnA))) && (hl & (1 << par->PinChnA)))
 		par->num++;
@@ -48,6 +49,22 @@ rotaryencoderparameter RotEnc_rte(rotaryencoderparameter* par, uint8_t data)
 	}
 	par->pchn = par->chn;
 	return *par;
+}
+
+// auxiliar
+uint8_t ROTENClh(uint8_t xp, uint8_t xi)
+{
+	uint8_t i;
+	i = xp ^ xi;
+	i &= xi;
+	return i;
+}
+uint8_t ROTENChl(uint8_t xp, uint8_t xi)
+{
+	uint8_t i;
+	i = xi ^ xp;
+	i &= xp;
+	return i;
 }
 
 /*** File Interrupt ***/
