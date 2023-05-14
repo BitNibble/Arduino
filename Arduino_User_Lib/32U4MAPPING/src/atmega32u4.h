@@ -41,11 +41,11 @@ Comment:
 // AUXILIAR
 #define Atmega32U4TimerInterruptFlag_Address 0x0035
 #define Atmega32U4TimerMask_Address 0x006E;
-#define Atmega32U4CompareRegister0_Address 0x0047
-#define Atmega32U4CompareRegister1_Address 0x0086
-#define Atmega32U4CompareRegister3_Address 0x0096
-#define Atmega32U4CompareRegister4_Address 0x00CF
-#define Atmega32U4ClockSelect_Address 0x00C5
+#define Atmega32U4TimerCompareRegister0_Address 0x0047
+#define Atmega32U4TimerCompareRegister1_Address 0x0086
+#define Atmega32U4TimerCompareRegister3_Address 0x0096
+#define Atmega32U4TimerCompareRegister4_Address 0x00CF
+#define Atmega32U4CpuClockSelect_Address 0x00C5
 
 /*** Global Variable ***/
 // HLbyte
@@ -140,7 +140,7 @@ typedef struct {
 	uint8_t clksel0; // 0xC5
 	uint8_t clksel1; // 0xC6
 	uint8_t clksta; // 0xC7
-} Atmega32U4ClockSelect_TypeDef;
+} Atmega32U4CpuClockSelect_TypeDef;
 
 // EEPROM (EEPROM)
 typedef struct {
@@ -253,7 +253,7 @@ typedef struct {
 	uint8_t ocr4d; // 0xD2
 	uint8_t fill; // (0xD4 - 0xD2) - 1
 	uint8_t dt4; // 0xD4
-} Atmega32U4CompareRegister4_TypeDef;
+} Atmega32U4TimerCompareRegister4_TypeDef;
 
 // Timer/Counter, 16-bit (TC1)
 typedef struct {
@@ -269,7 +269,7 @@ typedef struct {
 	HighLowByte ocr1a; // 0x88 0x89
 	HighLowByte ocr1b; // 0x8A 0x8B
 	HighLowByte ocr1c; // 0x8C 0x8D
-} Atmega32U4CompareRegister1_TypeDef;
+} Atmega32U4TimerCompareRegister1_TypeDef;
 
 // Timer/Counter, 16-bit (TC3)
 typedef struct {
@@ -285,7 +285,7 @@ typedef struct {
 	HighLowByte ocr3a; // 0x98 0x99
 	HighLowByte ocr3b; // 0x9A 0x9B
 	HighLowByte ocr3c; // 0x9C 0x9D
-} Atmega32U4CompareRegister3_TypeDef;
+} Atmega32U4TimerCompareRegister3_TypeDef;
 
 // Timer/Counter, 8-bit (TC0)
 typedef struct {
@@ -298,7 +298,7 @@ typedef struct {
 typedef struct {
 	uint8_t ocr0a; // 0x47
 	uint8_t ocr0b; // 0x48
-} Atmega32U4CompareRegister0_TypeDef;
+} Atmega32U4TimerCompareRegister0_TypeDef;
 
 // Two Wire Serial Interface (TWI)
 typedef struct {
