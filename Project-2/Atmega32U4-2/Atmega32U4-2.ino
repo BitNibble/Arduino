@@ -12,6 +12,7 @@ Comment:
 extern "C" {
   #include <atmega32u4mapping.h>
   #include <explode.h>
+  #include <rotenc.h>
 }
 
 /*** File Constant and Macros ***/
@@ -19,12 +20,14 @@ extern "C" {
 /*** File Variables ***/
 ATMEGA32U4 mega;
 EXPLODE pa;
+ROTENC pot;
 uint8_t a;
 uint8_t updown;
 uint16_t count;
 uint16_t count2;
 uint16_t top;
 uint16_t analog;
+uint8_t potread;
 
 /*** File Header ***/
 void PORTINIC(void);
@@ -33,7 +36,9 @@ void setup() {
   // put your setup code here, to run once:
   mega = ATMEGA32U4enable();
   pa = EXPLODEenable();
+  pot = ROTENCenable(1, 2);
   a = 0;
+  potread = 0;
   updown = 0;
   top = 85;
   count = 0;
@@ -95,15 +100,21 @@ mega.adc.reg->adcsrb &= ~(0x0F); // Set to free running mode, controlled by ADIF
 
  Serial.begin(9600);
 }
-
+/******* LOOOOOOP ********/
 void loop() {
   // put your main code here, to run repeatedly:
   pa.update(&pa.par, PORTB);
 
+  // delay makes it not capture transitions. use PCINT or timer has used here, or have no delays in main loop function.
+  //potread = pot.rte(&pot.par, mega.portd.reg->pin).num; 
+
+
   delay(1000);
   analog = mega.readhlbyte(mega.adc.reg->adc);
   Serial.print((uint16_t) analog);
-  Serial.println("\n");
+  Serial.print(" - ");
+  Serial.print((uint16_t) potread);
+  Serial.println("\r");
   
   //a = pa.par.HL;
 
@@ -115,6 +126,11 @@ void PORTINIC(void)
   mega.portc.reg->ddr |= (1 << 7);
   mega.portf.reg->ddr &= ~1; // PF0 pin 41 as input
   mega.portf.reg->port |= 1; // PF0 pin 41 pull up resister
+  //rotary encoder potenciometer
+  mega.portd.reg->ddr |= (1 << 3); // D1 or TX, [PD3 pin 21]
+  mega.portd.reg->port &= ~(1 << 2);
+  mega.portd.reg->ddr &= ~((1 << 1) | (1 << 2)); // D0 and D2, [PD2 Pin 20 and PD1 pin 19]
+  mega.portd.reg->port |= (1 << 1) | (1 << 2);
 }
 
 /*** Interrupt Handlers ***/
@@ -142,6 +158,7 @@ ISR(TIMER1_COMPA_vect){
         updown = 0;
       break;
   }
+  potread = pot.rte(&pot.par, mega.portd.reg->pin).num;
 }
 
 /*** EOF ***/
