@@ -179,7 +179,7 @@ typedef struct {
 typedef struct {
 	Atmega32U4Usart1_TypeDef* reg;
 	#if defined(_ATMEGA32U4UART_H_)
-		USART1 (*enable)(unsigned int baudrate, unsigned int FDbits, unsigned int Stopbits, unsigned int Parity );
+		UART (*enable)(unsigned int baudrate, unsigned int FDbits, unsigned int Stopbits, unsigned int Parity );
 	#endif
 } Atmega32U4Usart1;
 
