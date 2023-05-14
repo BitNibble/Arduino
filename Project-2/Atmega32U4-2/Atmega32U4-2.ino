@@ -13,7 +13,6 @@ extern "C" {
   #include <atmega32u4mapping.h>
   #include <explode.h>
 }
-#include <inttypes.h>
 
 /*** File Constant and Macros ***/
 
@@ -140,6 +139,7 @@ ISR(TIMER1_COMPA_vect){
       if(count++ > count2){ if(count2 < top){ mega.portc.reg->port ^=  (1 << 7); count2++; count = 0; }else{ updown = 0;} }
       break;
     defualt:
+        updown = 0;
       break;
   }
 }
