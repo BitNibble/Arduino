@@ -41,7 +41,7 @@ rotaryencoderparameter RotEnc_rte(rotaryencoderparameter* par, uint8_t data)
 	uint8_t hl;
 	par->chn = data & ((1 << par->PinChnB) | (1 << par->PinChnA));
 	hl = ROTENChl(par->pchn, par->chn);
-	if(par->pchn != par->chn){
+	if(hl){
 		if((par->pchn == ((1 << par->PinChnB) | (1 << par->PinChnA))) && (hl & (1 << par->PinChnA)))
 		par->num++;
 		if((par->pchn == ((1 << par->PinChnB) | (1 << par->PinChnA))) && (hl & (1 << par->PinChnB)))

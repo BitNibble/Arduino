@@ -123,7 +123,7 @@ void loop() {
 /*** Procedure and Function Definitions ***/
 void PORTINIC(void)
 {
-  mega.portc.reg->ddr |= (1 << 7);
+  mega.portc.reg->ddr |= (1 << 7); // LED
   mega.portf.reg->ddr &= ~1; // PF0 pin 41 as input
   mega.portf.reg->port |= 1; // PF0 pin 41 pull up resister
   //rotary encoder potenciometer
