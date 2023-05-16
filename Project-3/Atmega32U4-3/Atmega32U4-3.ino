@@ -14,45 +14,94 @@ extern "C" {
   #include <explode.h>
   #include <rotenc.h>
 }
-
+#include <math.h>
 /*** File Constant and Macros ***/
+#define tamanhocas 100
 
 /*** File Variables ***/
 ATMEGA32U4 mega;
+EXPLODE lala;
 ROTENC pot;
 
 uint16_t analog;
 uint8_t potread;
 double num;
+
+typedef struct{
+  uint8_t inputas[3];
+  uint8_t outputas;
+}ram;
+
+ram caputas[tamanhocas];
+ram aqui;
+
 /*** File Header ***/
 void PORTINIC(void);
 void timer1setup(void);
 void analog0setup(void);
+void laughter(ram* fonix, uint8_t lh, uint8_t hl);
 
 void setup() {
   // put your setup code here, to run once:
   mega = ATMEGA32U4enable();
+  lala = EXPLODEenable();
   pot = ROTENCenable(1, 2);
   PORTINIC();
   timer1setup();
   analog0setup();
-  num = 16646655;
+  aqui.outputas = 0;
+  //num = 16646655;
+  caputas[0].inputas[0] = 0;caputas[0].inputas[1] = 0;caputas[0].inputas[2] = 16;
+  caputas[0].outputas = 7;
+
+  caputas[1].inputas[0] = 7;caputas[1].inputas[1] = 0;caputas[1].inputas[2] = 16;
+  caputas[1].outputas = 0;
+
+  caputas[2].inputas[0] = 0;caputas[2].inputas[1] = 32;caputas[2].inputas[2] = 0;
+  caputas[2].outputas = 7;
+
+  caputas[3].inputas[0] = 7;caputas[3].inputas[1] = 32;caputas[3].inputas[2] = 0;
+  caputas[3].outputas = 0;
+
+  caputas[4].inputas[0] = 7;caputas[4].inputas[1] = 55;caputas[4].inputas[2] = 0;
+  caputas[4].outputas = 22;
+
   // Turn on all Interrupt Handlers
   mega.cpu.reg->sreg |= (1 << 7);
+
   Serial.begin(9600);
 }
+
+
+/***********************************************************************************/
 /******* LOOOOOOP ********/
 void loop() {
-  // put your main code here, to run repeatedly: 
+  // put your main code here, to run repeatedly:
+  lala.update(&lala.par, mega.portb.reg->pin);
+
+  laughter(&aqui, lala.par.LH, lala.par.HL);
+
+  mega.portc.reg->port = (1 << aqui.outputas);
+
   delay(1000);
   analog = mega.readhlbyte(mega.adc.reg->adc);
+
+  if(Serial){
   Serial.print((uint16_t) analog);
   Serial.print(" - ");
   Serial.print((uint16_t) potread);
+  Serial.print(" |- ");
+  Serial.print((uint8_t) aqui.inputas[0]);
   Serial.print(" - ");
-  Serial.print((uint32_t) num);
+  Serial.print((uint8_t) aqui.inputas[1]);
+  Serial.print(" - ");
+  Serial.print((uint8_t) aqui.inputas[2]);
+  Serial.print(" -> ");
+  Serial.print((uint8_t) aqui.outputas);
   Serial.println("\r");
+  }
 }
+/***********************************************************************************/
 
 
 /*** Procedure and Function Definitions ***/
@@ -66,6 +115,11 @@ void PORTINIC(void)
   mega.portd.reg->port &= ~(1 << 2);
   mega.portd.reg->ddr &= ~((1 << 1) | (1 << 2)); // D0 and D2, [PD2 Pin 20 and PD1 pin 19]
   mega.portd.reg->port |= (1 << 1) | (1 << 2);
+
+  mega.portb.reg->ddr &= ~0xFF; // as inputs
+  mega.portb.reg->port |= 0xFF; // with pullup
+
+
 }
 void timer1setup(void)
 {
@@ -123,7 +177,18 @@ void analog0setup()
   mega.adc.reg->adcsrb &= ~(0x0F); // Set to free running mode, controlled by ADIF
   /************************************************/
 }
-
+void laughter(ram* fonix, uint8_t lh, uint8_t hl)
+{
+  uint8_t i;
+  uint32_t tmp;
+  fonix->inputas[0] = fonix->outputas;
+  fonix->inputas[1] = lh;
+  fonix->inputas[2] = hl;
+  for(i = 0; i < tamanhocas; i++){
+      if(caputas[i].inputas[0] == fonix->inputas[0] && caputas[i].inputas[1] == fonix->inputas[1] && caputas[i].inputas[2] == fonix->inputas[2])
+      {fonix->outputas = caputas[i].outputas; i = tamanhocas;}
+  }
+}
 /*** Interrupt Handlers ***/
 ISR(TIMER1_COMPA_vect){
   potread = pot.rte(&pot.par, mega.portd.reg->pin).num;
