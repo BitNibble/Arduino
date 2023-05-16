@@ -16,7 +16,7 @@ extern "C" {
 }
 #include <math.h>
 /*** File Constant and Macros ***/
-#define tamanhocas 10
+#define tamanhocas 6
 
 /*** File Variables ***/
 ATMEGA32U4 mega;
@@ -70,12 +70,12 @@ void setup() {
   caputas[3].outputas[1] = 64;
 
   caputas[4].inputas[0] = 128;caputas[4].inputas[1] = 0;caputas[4].inputas[2] = 32;
-  caputas[4].outputas[0] = 64;
-  caputas[4].outputas[1] = 0;
-
-  caputas[4].inputas[0] = 192;caputas[4].inputas[1] = 0;caputas[4].inputas[2] = 32;
   caputas[4].outputas[0] = 0;
-  caputas[4].outputas[1] = 7;
+  caputas[4].outputas[1] = 128;
+
+  caputas[5].inputas[0] = 192;caputas[4].inputas[1] = 0;caputas[4].inputas[2] = 32;
+  caputas[5].outputas[0] = 0;
+  caputas[5].outputas[1] = 7;
 
   // Turn on all Interrupt Handlers
   mega.cpu.reg->sreg |= (1 << 7);
@@ -104,8 +104,15 @@ void loop() {
   //Serial.print((uint16_t) analog);
   //Serial.print(" - ");
   //Serial.print((uint16_t) potread);
-  
-  //Serial.println("\r");
+  Serial.print(" i1 "); 
+  Serial.print((uint8_t) aqui.inputas[0]);
+  Serial.print(" i2 "); 
+  Serial.print((uint8_t) aqui.inputas[1]);
+  Serial.print(" i3 "); 
+  Serial.print((uint8_t) aqui.inputas[2]);
+  Serial.print(" -> ");
+  Serial.print((uint8_t) aqui.inputas[0]);
+  Serial.println("\r");
   //}
 }
 /***********************************************************************************/
@@ -187,30 +194,27 @@ void analog0setup()
 void laughter(ram* fonix, uint8_t lh, uint8_t hl)
 {
   uint8_t index=0;
-  uint8_t tmp[2];
-  Serial.print(" |- ");
-  Serial.print((uint8_t) fonix->inputas[0]);
+  uint8_t jndex=0;
+  uint8_t mask;
   fonix->inputas[1] = lh;
   fonix->inputas[2] = hl;
-  Serial.print(" - ");
-  Serial.print((uint8_t) fonix->inputas[1]);
-  Serial.print(" - ");
-  Serial.print((uint8_t) fonix->inputas[2]);
-  for(index = 0; index < tamanhocas; index++){
-    Serial.print(" - "); Serial.print((uint8_t) index);
-    if(caputas[index].inputas[0] == fonix->inputas[0]){
-      Serial.print(" - "); Serial.print((uint8_t) index);
-      if(caputas[index].inputas[1] == fonix->inputas[1] && caputas[index].inputas[2] == fonix->inputas[2]){
-        fonix->outputas[0] = caputas[index].outputas[0]; fonix->outputas[1] = caputas[index].outputas[1]; 
-        Serial.print(" - ");
-        Serial.print((uint8_t) index);
-        index=tamanhocas;
+  for(jndex = 0;jndex < 8; jndex++ ){
+    mask = (1 << jndex);
+    if((fonix->inputas[1] & mask) || (fonix->inputas[2] & mask)){
+      for(index = 0; index < tamanhocas; index++){
+        if((fonix->inputas[0]) == caputas[index].inputas[0]){
+          if((fonix->inputas[1] & mask) == caputas[index].inputas[1]){
+            if((fonix->inputas[2] & mask) == caputas[index].inputas[2]){
+              fonix->outputas[0] = caputas[index].outputas[0]; fonix->outputas[1] = caputas[index].outputas[1];
+              fonix->inputas[0] |= fonix->outputas[0] ;
+              fonix->inputas[0] &= ~fonix->outputas[1];
+              index=tamanhocas;
+            }
+          }
+        }
       }
-    }
+    } 
   }
-  if(index == tamanhocas+1){fonix->inputas[0] = fonix->outputas[0] & ~fonix->outputas[1];}
-  Serial.print(" -> ");
-  Serial.print((uint8_t) fonix->inputas[0]); Serial.println("\r");
 }
 /*** Interrupt Handlers ***/
 ISR(TIMER1_COMPA_vect){
