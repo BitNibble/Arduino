@@ -6,7 +6,7 @@ License: GNU General Public License
 Hardware: Arduino Leonardo
 Date: 11052023
 Comment:
-	
+  Arduino keeps crashing on uploading sketches, full of bugs.
 ************************************************************************/
 /*** File Libraries ***/
 extern "C" {
@@ -16,7 +16,7 @@ extern "C" {
 }
 #include <math.h>
 /*** File Constant and Macros ***/
-#define tamanhocas 6
+#define tamanhocas 10
 
 /*** File Variables ***/
 ATMEGA32U4 mega;
@@ -50,12 +50,17 @@ void setup() {
   PORTINIC();
   timer1setup();
   analog0setup();
-  for(select=0;select<tamanhocas;caputas[select].inputas[0]=0,caputas[select].inputas[1]=0,caputas[select].inputas[2]=0,caputas[select].outputas[0]=0,caputas[select].outputas[1]=0,select++);
+  for(select=0;select<tamanhocas;caputas[select].inputas[0]=0xFF,caputas[select].inputas[1]=0xFF,caputas[select].inputas[2]=0xFF,caputas[select].outputas[0]=0xFF,caputas[select].outputas[1]=0xFF,select++);
 
-  //num = 16646655;
+  // num = 16646655;
+  // record behavior
   caputas[0].inputas[0] = 0;caputas[0].inputas[1] = 0;caputas[0].inputas[2] = 16;
-  caputas[0].outputas[0] = 224;
-  caputas[0].outputas[1] = 0;
+  caputas[0].outputas[0] = 224; // set
+  caputas[0].outputas[1] = 0; // clear
+
+  caputas[6].inputas[0] = 0;caputas[6].inputas[1] = 0;caputas[6].inputas[2] = 48;
+  caputas[6].outputas[0] = 224;
+  caputas[6].outputas[1] = 0;
 
   caputas[1].inputas[0] = 224;caputas[1].inputas[1] = 0;caputas[1].inputas[2] = 16;
   caputas[1].outputas[0] = 0;
@@ -73,7 +78,7 @@ void setup() {
   caputas[4].outputas[0] = 0;
   caputas[4].outputas[1] = 32;
 
-  caputas[5].inputas[0] = 192;caputas[4].inputas[1] = 0;caputas[4].inputas[2] = 32;
+  caputas[5].inputas[0] = 192;caputas[5].inputas[1] = 0;caputas[5].inputas[2] = 32;
   caputas[5].outputas[0] = 0;
   caputas[5].outputas[1] = 192;
 
@@ -100,10 +105,10 @@ void loop() {
   delay(1000);
   analog = mega.readhlbyte(mega.adc.reg->adc);
 
-  //if(Serial){
-  //Serial.print((uint16_t) analog);
-  //Serial.print(" - ");
-  //Serial.print((uint16_t) potread);
+  if(Serial){
+  Serial.print((uint16_t) analog);
+  Serial.print(" - ");
+  Serial.print((uint16_t) potread);
   Serial.print(" i1 "); 
   Serial.print((uint8_t) aqui.inputas[0]);
   Serial.print(" i2 "); 
@@ -113,7 +118,7 @@ void loop() {
   Serial.print(" -> ");
   Serial.print((uint8_t) aqui.inputas[0]);
   Serial.println("\r");
-  //}
+  }
 }
 /***********************************************************************************/
 
