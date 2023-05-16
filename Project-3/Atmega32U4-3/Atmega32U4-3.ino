@@ -16,7 +16,7 @@ extern "C" {
 }
 #include <math.h>
 /*** File Constant and Macros ***/
-#define tamanhocas 100
+#define tamanhocas 10
 
 /*** File Variables ***/
 ATMEGA32U4 mega;
@@ -29,11 +29,12 @@ double num;
 
 typedef struct{
   uint8_t inputas[3];
-  uint8_t outputas;
+  uint8_t outputas[2]; // 0 -set and 1 - clear, bits
 }ram;
 
 ram caputas[tamanhocas];
 ram aqui;
+uint8_t select;
 
 /*** File Header ***/
 void PORTINIC(void);
@@ -49,27 +50,38 @@ void setup() {
   PORTINIC();
   timer1setup();
   analog0setup();
-  aqui.outputas = 0;
+  for(select=0;select<tamanhocas;caputas[select].inputas[0]=0,caputas[select].inputas[1]=0,caputas[select].inputas[2]=0,caputas[select].outputas[0]=0,caputas[select].outputas[1]=0,select++);
+
   //num = 16646655;
   caputas[0].inputas[0] = 0;caputas[0].inputas[1] = 0;caputas[0].inputas[2] = 16;
-  caputas[0].outputas = 7;
+  caputas[0].outputas[0] = 128;
+  caputas[0].outputas[1] = 0;
 
-  caputas[1].inputas[0] = 7;caputas[1].inputas[1] = 0;caputas[1].inputas[2] = 16;
-  caputas[1].outputas = 0;
+  caputas[1].inputas[0] = 128;caputas[1].inputas[1] = 0;caputas[1].inputas[2] = 16;
+  caputas[1].outputas[0] = 0;
+  caputas[1].outputas[1] = 128;
 
-  caputas[2].inputas[0] = 0;caputas[2].inputas[1] = 32;caputas[2].inputas[2] = 0;
-  caputas[2].outputas = 7;
+  caputas[2].inputas[0] = 0;caputas[2].inputas[1] = 0;caputas[2].inputas[2] = 32;
+  caputas[2].outputas[0] = 64;
+  caputas[2].outputas[1] = 0;
 
-  caputas[3].inputas[0] = 7;caputas[3].inputas[1] = 32;caputas[3].inputas[2] = 0;
-  caputas[3].outputas = 0;
+  caputas[3].inputas[0] = 64;caputas[3].inputas[1] = 0;caputas[3].inputas[2] = 32;
+  caputas[3].outputas[0] = 0;
+  caputas[3].outputas[1] = 64;
 
-  caputas[4].inputas[0] = 7;caputas[4].inputas[1] = 55;caputas[4].inputas[2] = 0;
-  caputas[4].outputas = 22;
+  caputas[4].inputas[0] = 128;caputas[4].inputas[1] = 0;caputas[4].inputas[2] = 32;
+  caputas[4].outputas[0] = 64;
+  caputas[4].outputas[1] = 0;
+
+  caputas[4].inputas[0] = 192;caputas[4].inputas[1] = 0;caputas[4].inputas[2] = 32;
+  caputas[4].outputas[0] = 0;
+  caputas[4].outputas[1] = 7;
 
   // Turn on all Interrupt Handlers
   mega.cpu.reg->sreg |= (1 << 7);
 
   lala.par.XF=lala.par.XI=0xFF;
+  aqui.inputas[0] = 0;
 
   Serial.begin(9600);
 }
@@ -81,27 +93,20 @@ void loop() {
   // put your main code here, to run repeatedly:
   lala.update(&lala.par, mega.portb.reg->pin);
 
-  laughter(&aqui, lala.par.LH, lala.par.HL);
+  laughter(&aqui, lala.par.LH & ~1, lala.par.HL & ~1);
 
-  mega.portc.reg->port = (1 << aqui.outputas);
+  mega.portc.reg->port = aqui.inputas[0];
 
   delay(1000);
   analog = mega.readhlbyte(mega.adc.reg->adc);
 
-  if(Serial){
-  Serial.print((uint16_t) analog);
-  Serial.print(" - ");
-  Serial.print((uint16_t) potread);
-  Serial.print(" |- ");
-  Serial.print((uint8_t) aqui.inputas[0]);
-  Serial.print(" - ");
-  Serial.print((uint8_t) aqui.inputas[1]);
-  Serial.print(" - ");
-  Serial.print((uint8_t) aqui.inputas[2]);
-  Serial.print(" -> ");
-  Serial.print((uint8_t) aqui.outputas);
-  Serial.println("\r");
-  }
+  //if(Serial){
+  //Serial.print((uint16_t) analog);
+  //Serial.print(" - ");
+  //Serial.print((uint16_t) potread);
+  
+  //Serial.println("\r");
+  //}
 }
 /***********************************************************************************/
 
@@ -118,8 +123,8 @@ void PORTINIC(void)
   mega.portd.reg->ddr &= ~((1 << 1) | (1 << 2)); // D0 and D2, [PD2 Pin 20 and PD1 pin 19]
   mega.portd.reg->port |= (1 << 1) | (1 << 2);
 
-  mega.portb.reg->ddr &= ~0xFF; // as inputs
-  mega.portb.reg->port |= 0xFF; // with pullup
+  mega.portb.reg->ddr &= ~0xFE; // as inputs
+  mega.portb.reg->port |= 0xFE; // with pullup
 
 
 }
@@ -181,15 +186,31 @@ void analog0setup()
 }
 void laughter(ram* fonix, uint8_t lh, uint8_t hl)
 {
-  uint8_t i;
-  uint32_t tmp;
-  fonix->inputas[0] = fonix->outputas;
+  uint8_t index=0;
+  uint8_t tmp[2];
+  Serial.print(" |- ");
+  Serial.print((uint8_t) fonix->inputas[0]);
   fonix->inputas[1] = lh;
   fonix->inputas[2] = hl;
-  for(i = 0; i < tamanhocas; i++){
-      if(caputas[i].inputas[0] == fonix->inputas[0] && caputas[i].inputas[1] == fonix->inputas[1] && caputas[i].inputas[2] == fonix->inputas[2])
-      {fonix->outputas = caputas[i].outputas; i = tamanhocas;}
+  Serial.print(" - ");
+  Serial.print((uint8_t) fonix->inputas[1]);
+  Serial.print(" - ");
+  Serial.print((uint8_t) fonix->inputas[2]);
+  for(index = 0; index < tamanhocas; index++){
+    Serial.print(" - "); Serial.print((uint8_t) index);
+    if(caputas[index].inputas[0] == fonix->inputas[0]){
+      Serial.print(" - "); Serial.print((uint8_t) index);
+      if(caputas[index].inputas[1] == fonix->inputas[1] && caputas[index].inputas[2] == fonix->inputas[2]){
+        fonix->outputas[0] = caputas[index].outputas[0]; fonix->outputas[1] = caputas[index].outputas[1]; 
+        Serial.print(" - ");
+        Serial.print((uint8_t) index);
+        index=tamanhocas;
+      }
+    }
   }
+  if(index == tamanhocas+1){fonix->inputas[0] = fonix->outputas[0] & ~fonix->outputas[1];}
+  Serial.print(" -> ");
+  Serial.print((uint8_t) fonix->inputas[0]); Serial.println("\r");
 }
 /*** Interrupt Handlers ***/
 ISR(TIMER1_COMPA_vect){
