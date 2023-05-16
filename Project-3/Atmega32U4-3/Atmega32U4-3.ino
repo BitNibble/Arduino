@@ -54,28 +54,28 @@ void setup() {
 
   //num = 16646655;
   caputas[0].inputas[0] = 0;caputas[0].inputas[1] = 0;caputas[0].inputas[2] = 16;
-  caputas[0].outputas[0] = 128;
+  caputas[0].outputas[0] = 224;
   caputas[0].outputas[1] = 0;
 
-  caputas[1].inputas[0] = 128;caputas[1].inputas[1] = 0;caputas[1].inputas[2] = 16;
+  caputas[1].inputas[0] = 224;caputas[1].inputas[1] = 0;caputas[1].inputas[2] = 16;
   caputas[1].outputas[0] = 0;
-  caputas[1].outputas[1] = 128;
+  caputas[1].outputas[1] = 224;
 
   caputas[2].inputas[0] = 0;caputas[2].inputas[1] = 0;caputas[2].inputas[2] = 32;
-  caputas[2].outputas[0] = 64;
+  caputas[2].outputas[0] = 96;
   caputas[2].outputas[1] = 0;
 
-  caputas[3].inputas[0] = 64;caputas[3].inputas[1] = 0;caputas[3].inputas[2] = 32;
+  caputas[3].inputas[0] = 96;caputas[3].inputas[1] = 0;caputas[3].inputas[2] = 32;
   caputas[3].outputas[0] = 0;
-  caputas[3].outputas[1] = 64;
+  caputas[3].outputas[1] = 96;
 
-  caputas[4].inputas[0] = 128;caputas[4].inputas[1] = 0;caputas[4].inputas[2] = 32;
+  caputas[4].inputas[0] = 224;caputas[4].inputas[1] = 0;caputas[4].inputas[2] = 32;
   caputas[4].outputas[0] = 0;
-  caputas[4].outputas[1] = 128;
+  caputas[4].outputas[1] = 32;
 
   caputas[5].inputas[0] = 192;caputas[4].inputas[1] = 0;caputas[4].inputas[2] = 32;
   caputas[5].outputas[0] = 0;
-  caputas[5].outputas[1] = 7;
+  caputas[5].outputas[1] = 192;
 
   // Turn on all Interrupt Handlers
   mega.cpu.reg->sreg |= (1 << 7);
@@ -194,27 +194,19 @@ void analog0setup()
 void laughter(ram* fonix, uint8_t lh, uint8_t hl)
 {
   uint8_t index=0;
-  uint8_t jndex=0;
-  uint8_t mask;
   fonix->inputas[1] = lh;
   fonix->inputas[2] = hl;
-  for(jndex = 0;jndex < 8; jndex++ ){
-    mask = (1 << jndex);
-    if((fonix->inputas[1] & mask) || (fonix->inputas[2] & mask)){
       for(index = 0; index < tamanhocas; index++){
         if((fonix->inputas[0]) == caputas[index].inputas[0]){
-          if((fonix->inputas[1] & mask) == caputas[index].inputas[1]){
-            if((fonix->inputas[2] & mask) == caputas[index].inputas[2]){
-              fonix->outputas[0] = caputas[index].outputas[0]; fonix->outputas[1] = caputas[index].outputas[1];
-              fonix->inputas[0] |= fonix->outputas[0] ;
-              fonix->inputas[0] &= ~fonix->outputas[1];
+          if(fonix->inputas[1] == caputas[index].inputas[1]){
+            if(fonix->inputas[2] == caputas[index].inputas[2]){
+              fonix->inputas[0] |= caputas[index].outputas[0];
+              fonix->inputas[0] &= ~caputas[index].outputas[1];;
               index=tamanhocas;
             }
           }
         }
       }
-    } 
-  }
 }
 /*** Interrupt Handlers ***/
 ISR(TIMER1_COMPA_vect){
