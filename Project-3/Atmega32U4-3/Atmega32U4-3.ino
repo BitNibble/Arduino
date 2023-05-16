@@ -69,6 +69,8 @@ void setup() {
   // Turn on all Interrupt Handlers
   mega.cpu.reg->sreg |= (1 << 7);
 
+  lala.par.XF=lala.par.XI=0xFF;
+
   Serial.begin(9600);
 }
 
